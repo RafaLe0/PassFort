@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>PassFort</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <h2>PassFort</h2>
+  <p>Check the strength of your password and generate a new one.</p>
+
+  <input type="password" id="passwordInput" placeholder="Type your password" autocomplete="off" />
+
+  <div class="buttons">
+    <button id="checkBtn">Vérifier</button>
+    <button id="generateBtn">Générer</button>
+  </div>
+
+  <div id="result" class="result"></div>
+
+  <footer>
+    <small>Local only — powered by Have I Been Pwned</small>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
