@@ -28,38 +28,42 @@ async function checkPwned(password) {
 function evaluateStrength(password) {
   if (!password) return { label: "Vide", score: 0, bits: 0 };
 
-  let score = 0;
-  let bits = 0;
-
   const length = password.length;
-
   const hasLower = /[a-z]/.test(password);
   const hasUpper = /[A-Z]/.test(password);
   const hasDigit = /[0-9]/.test(password);
   const hasSymbol = /[^A-Za-z0-9]/.test(password);
 
   const variety = [hasLower, hasUpper, hasDigit, hasSymbol].filter(Boolean).length;
-
   const charsetSize = variety === 1 ? 26 : variety === 2 ? 52 : variety === 3 ? 62 : 94;
-  bits = Math.round(Math.log2(Math.pow(charsetSize, length)));
 
+  const bits = Math.round(length * Math.log2(charsetSize));
+
+  // Score global de 0 à 5
+  let score;
   let label;
-  if (length >= 15 && bits >= 100) {
-    label = "Très fort";
-    score = 4;
-  } else if (length >= 12 && bits >= 85) {
-    label = "Fort";
-    score = 3;
-  } else if (length >= 9 && bits >= 65) {
-    label = "Moyen";
-    score = 2;
-  } else {
-    label = "Faible";
+
+  if (bits < 40) {
     score = 1;
+    label = "Très faible";
+  } else if (bits < 60) {
+    score = 2;
+    label = "Faible";
+  } else if (bits < 80) {
+    score = 3;
+    label = "Moyen";
+  } else if (bits < 100) {
+    score = 4;
+    label = "Fort";
+  } else {
+    score = 5;
+    label = "Très fort";
   }
 
   return { label, score, bits };
 }
+
+
 
 function generatePassword(length = 16) {
   const lower = "abcdefghijklmnopqrstuvwxyz";
@@ -98,17 +102,45 @@ document.getElementById("checkBtn").addEventListener("click", async () => {
   result.style.color = "#444";
 
   try {
-    const { label, score } = evaluateStrength(pwd);
-    const pwnCount = await checkPwned(pwd);
+	const { label, score, bits } = evaluateStrength(pwd);
+	const pwnCount = await checkPwned(pwd);
 
-    if (pwnCount > 0) {
-      result.textContent = `This password has been seen ${pwnCount} times in data breaches !`;
-      result.style.color = "#d9534f";
-    } else {
-      const emoji = label === "Strong" ? "✅" : label === "Mid" ? "🟠" : "❌";
-      result.textContent = `${emoji} ${label} (${score}/6) — This password wasn't found in any of the Pwned Passwords loaded into Have I Been Pwned`;
-      result.style.color = label === "Strong" ? "#28a745" : "#e67e22";
-    }
+	if (pwnCount > 0) {
+  		result.textContent = `⚠️ This password appears ${pwnCount} times in known breaches!`;
+  		result.style.color = "#d9534f";
+	} else {
+  		let emoji;
+  		let color;
+
+  		switch (label) {
+    			case "Très faible":
+		     		emoji = "❌";
+      				color = "#d9534f";
+      			break;
+    			case "Faible":
+      				emoji = "🔴";
+      				color = "#e74c3c";
+      			break;
+    			case "Moyen":
+      				emoji = "🟠";
+      				color = "#e67e22";
+      			break;
+    			case "Fort":
+      				emoji = "🟢";
+      				color = "#28a745";
+      			break;
+    			case "Très fort":
+      				emoji = "💪";
+      				color = "#00ff99";
+      			break;
+    			default:
+      				emoji = "❓";
+      				color = "#999";
+  		}
+
+  		result.textContent = `${emoji} ${label} (${score}/5) — ${bits} bits of entropy — Not found in HIBP database`;
+  		result.style.color = color;
+	}
   } catch (err) {
     console.error(err);
     result.textContent = "Error contacting API Have I Been Pwned.";
@@ -123,3 +155,34 @@ document.getElementById("generateBtn").addEventListener("click", () => {
   result.textContent = "New password generated — Cick on verify to test it";
   result.style.color = "#444";
 });
+
+
+
+document.getElementById("toggleVisibilityBtn").addEventListener("click", () => {
+  const input = document.getElementById("passwordInput");
+  if (input.type === "password") {
+    input.type = "text";
+  } else {
+    input.type = "password";
+  }
+});
+
+
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  const input = document.getElementById("passwordInput");
+  if (!input.value) return;
+
+  try {
+    await navigator.clipboard.writeText(input.value);
+    const result = document.getElementById("result");
+    result.textContent = "Password copied to clipboard";
+    result.style.color = "#28a745";
+  } catch (err) {
+    console.error("Clipboard error:", err);
+    const result = document.getElementById("result");
+    result.textContent = "Unable to copy password";
+    result.style.color = "#d9534f";
+  }
+});
+
