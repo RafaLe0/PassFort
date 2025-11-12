@@ -30,7 +30,7 @@ Designed with a clean, dark “cybersecurity” UI and focused on local computat
 - Clone or download the repository to your computer:
 
 ```
-git clone https://github.com/RafaLe0/PassFort.git
+git clone git@github.com:RafaLe0/PassFort.git
 cd PassFort
 ```
 
