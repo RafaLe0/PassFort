@@ -1,10 +1,7 @@
 # PassFort
---- 
-
 **PassFort** — a small, privacy-first browser extension to generate strong passwords, measure password entropy, and check whether a password has appeared in known breaches using the Have I Been Pwned (HIBP) Pwned Passwords k-anonymity API.
 
 Designed with a clean, dark “cybersecurity” UI and focused on local computation: password entropy is calculated in the popup and only the first 5 characters of the SHA-1 hash are sent to HIBP (k-anonymity), so full passwords are never transmitted.
---- 
 
 ## Features
 
