@@ -3,7 +3,7 @@ Passfort — a small, privacy-first browser extension to generate strong passwor
 
 Designed with a clean, dark “cybersecurity” UI and focused on local computation: password entropy is calculated in the popup and only the first 5 characters of the SHA-1 hash are sent to HIBP (k-anonymity), so full passwords are never transmitted.
 
-## Features
+## Features
 
 - Generate secure, random passwords (configurable length).
 
@@ -25,7 +25,7 @@ Designed with a clean, dark “cybersecurity” UI and focused on local computat
 
 - No build tools required — the extension runs as-is from the source directory.
  
-### Quick install (load unpacked extension)
+### Quick install (load unpacked extension)
 
 - Clone or download the repository to your computer:
 
